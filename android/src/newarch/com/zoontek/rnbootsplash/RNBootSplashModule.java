@@ -20,12 +20,12 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec {
   }
 
   @Override
-  public void hide(double duration, Promise promise) {
-    RNBootSplashModuleImpl.hide(getReactApplicationContext(), duration, promise);
+  public void hide(Promise promise) {
+    RNBootSplashModuleImpl.hide(getReactApplicationContext(), promise);
   }
 
   @Override
-  public void getVisibilityStatus(Promise promise) {
-    RNBootSplashModuleImpl.getVisibilityStatus(promise);
+  public boolean isVisible() {
+    return RNBootSplashModuleImpl.isVisible();
   }
 }

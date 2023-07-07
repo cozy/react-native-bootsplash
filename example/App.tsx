@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import { SystemBars } from "react-native-bars";
-import * as BootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
 const bootSplashLogo = require("./assets/bootsplash_logo.png");
 

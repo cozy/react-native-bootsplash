@@ -22,12 +22,12 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void hide(final double duration, final Promise promise) {
-    RNBootSplashModuleImpl.hide(getReactApplicationContext(), duration, promise);
+  public void hide(final Promise promise) {
+    RNBootSplashModuleImpl.hide(getReactApplicationContext(), promise);
   }
 
-  @ReactMethod
-  public void getVisibilityStatus(final Promise promise) {
-    RNBootSplashModuleImpl.getVisibilityStatus(promise);
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  public boolean isVisible() {
+    return RNBootSplashModuleImpl.isVisible();
   }
 }

@@ -3679,7 +3679,7 @@ react-native-bars@^2.2.2:
   integrity sha512-ZSqUoAzS6YeJodcudcrY0C6wH8uka7m6kuWSn+4TmG+m0ik1FdNC17XbXbHcqJhpvqWYmWS9i0PPFhCvn/2loQ==
 
 "react-native-bootsplash@file:..":
-  version "4.7.4"
+  version "4.7.5"
   dependencies:
     fs-extra "^11.1.1"
     picocolors "^1.0.0"

@@ -251,7 +251,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this); // ⬅️ initialize the splash screen
+    BootSplash.init(this,R.style.BootTheme); // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
 }
@@ -264,36 +264,31 @@ public class MainActivity extends ReactActivity {
 #### Method type
 
 ```ts
-type hide = (config?: { fade?: boolean; duration?: number }) => Promise<void>;
+type hide = () => Promise<void>;
 ```
-
-Note: Only durations above 220ms are visually noticeable. Smaller values will be ignored and the default duration will be used.
 
 #### Usage
 
 ```js
-import RNBootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
-RNBootSplash.hide(); // immediate
-RNBootSplash.hide({ fade: true }); // fade with 220ms default duration
-RNBootSplash.hide({ fade: true, duration: 500 }); // fade with custom duration
+BootSplash.hide();
 ```
 
-### getVisibilityStatus()
+### isVisible()
 
 #### Method type
 
 ```ts
-type VisibilityStatus = "hidden" | "visible";
-type getVisibilityStatus = () => Promise<VisibilityStatus>;
+type isVisible = () => boolean;
 ```
 
 #### Usage
 
 ```js
-import RNBootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
-RNBootSplash.getVisibilityStatus().then((status) => console.log(status));
+console.log(BootSplash.isVisible());
 ```
 
 ## Real world example
@@ -301,7 +296,7 @@ RNBootSplash.getVisibilityStatus().then((status) => console.log(status));
 ```js
 import React, { useEffect } from "react";
 import { Text } from "react-native";
-import RNBootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
 function App() {
   useEffect(() => {
@@ -310,7 +305,7 @@ function App() {
     };
 
     init().finally(async () => {
-      await RNBootSplash.hide({ fade: true, duration: 500 });
+      await BootSplash.hide();
       console.log("BootSplash has been hidden successfully");
     });
   }, []);
@@ -328,11 +323,11 @@ If you are using React Navigation, you can hide the splash screen once the navig
 ```js
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import RNBootSplash from "react-native-bootsplash";
+import BootSplash from "react-native-bootsplash";
 
 function App() {
   return (
-    <NavigationContainer onReady={() => RNBootSplash.hide()}>
+    <NavigationContainer onReady={() => BootSplash.hide()}>
       {/* content */}
     </NavigationContainer>
   );
@@ -353,7 +348,7 @@ To add the mocks, create a file _jest/setup.js_ (or any other file name) contain
 jest.mock("react-native-bootsplash", () => {
   return {
     hide: jest.fn().mockResolvedValueOnce(),
-    getVisibilityStatus: jest.fn().mockResolvedValue("hidden"),
+    visible: jest.fn().mockReturnValue(false),
   };
 });
 ```

@@ -22,7 +22,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this);
+    RNBootSplash.init(this, R.style.BootTheme);
     super.onCreate(savedInstanceState);
     RNBars.init(this, "dark-content");
   }

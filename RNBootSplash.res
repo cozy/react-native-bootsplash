@@ -1,24 +1,19 @@
-type config = {fade: bool}
+@module("react-native-bootsplash") @scope("default")
+external hide: unit => Js.Promise.t<unit> = "hide"
 
 @module("react-native-bootsplash") @scope("default")
-external hide: config => Js.Promise.t<unit> = "hide"
-
-// Note that this binding requires BuckleScript >= 8.2.0
-type visibilityStatus = [#hidden | #visible]
-
-@module("react-native-bootsplash") @scope("default")
-external getVisibilityStatus: unit => Js.Promise.t<visibilityStatus> = "getVisibilityStatus"
+external visible: unit => boolean = "visible"
 /*
 ## Usage
 
 ```rescript
- RNBootSplash.hide({fade: true})->ignore
+ RNBootSplash.hide()->ignore
 ```
 
 Or
 
  ```rescript
-RNBootSplash.hide({fade: true})->Js.Promise.then_(() => {
+RNBootSplash.hide()->Js.Promise.then_(() => {
   Js.log("RN BootSplash: fading is over")
   Js.Promise.resolve()
 }, _)->Js.Promise.catch(error => {

@@ -1,0 +1,6 @@
+<resources>
+    <public name="Theme.SplashScreen" type="style" />
+    <public name="postSplashScreenTheme" type="attr" />
+    <public name="windowSplashScreenAnimatedIcon" type="attr" />
+    <public name="windowSplashScreenBackground" type="attr" />
+</resources>
