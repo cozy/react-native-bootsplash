@@ -14,7 +14,6 @@ static UIView *_loadingView = nil;
 static UIView *_rootView = nil;
 static float _duration = 0;
 static bool _nativeHidden = false;
-static bool _transitioning = false;
 
 @implementation RNBootSplash
 
@@ -49,8 +48,6 @@ RCT_EXPORT_MODULE();
 
   if (_duration > 0) {
     dispatch_async(dispatch_get_main_queue(), ^{
-      _transitioning = true;
-
       [UIView transitionWithView:_rootView
                         duration:_duration / 1000.0
                          options:UIViewAnimationOptionTransitionCrossDissolve
@@ -61,7 +58,6 @@ RCT_EXPORT_MODULE();
         [_loadingView removeFromSuperview];
         _loadingView = nil;
 
-        _transitioning = false;
         return [RNBootSplash clearResolveQueue];
       }];
     });
@@ -156,8 +152,6 @@ RCT_EXPORT_MODULE();
                      reject:(RCTPromiseRejectBlock)reject {
   if ([RNBootSplash isLoadingViewHidden])
     return resolve(@"hidden");
-  else if (_transitioning)
-    return resolve(@"transitioning");
   else
     return resolve(@"visible");
 }

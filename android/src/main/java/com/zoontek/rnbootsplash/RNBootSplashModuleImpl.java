@@ -29,7 +29,6 @@ public class RNBootSplashModuleImpl {
   private enum Status {
     VISIBLE,
     HIDDEN,
-    TRANSITIONING
   }
 
   @Nullable
@@ -119,10 +118,6 @@ public class RNBootSplashModuleImpl {
             }
           }, 250);
         } else {
-          if (mFadeDuration > 0) {
-            mStatus = Status.TRANSITIONING;
-          }
-
           mShouldKeepOnScreen = false;
 
           final Timer timer = new Timer();
@@ -157,9 +152,6 @@ public class RNBootSplashModuleImpl {
         break;
       case HIDDEN:
         promise.resolve("hidden");
-        break;
-      case TRANSITIONING:
-        promise.resolve("transitioning");
         break;
     }
   }

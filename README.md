@@ -301,7 +301,7 @@ RNBootSplash.hide({ fade: true, duration: 500 }); // fade with custom duration
 #### Method type
 
 ```ts
-type VisibilityStatus = "visible" | "hidden" | "transitioning";
+type VisibilityStatus = "hidden" | "visible";
 type getVisibilityStatus = () => Promise<VisibilityStatus>;
 ```
 
