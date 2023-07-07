@@ -196,24 +196,7 @@ Set the `BootSplash.storyboard` as launch screen file:
 
 ### Android
 
-_⚠️  On Android >= 12, the splash screen will not appear if you start your app from the terminal / Android Studio. To see it, kill your app and restart it in normal conditions (tap on your app icon in the app launcher)._
-
----
-
-1. Edit your `android/app/build.gradle` file:
-
-```gradle
-dependencies {
-  // The version of react-native is set by the React Native Gradle Plugin
-  implementation("com.facebook.react:react-android")
-  implementation("androidx.core:core-splashscreen:1.0.0") // add this line
-
-  // …
-```
-
-_⚠️  Don't forget going into the `android` directory to execute a `./gradlew clean && ./gradlew build` (or perform a Gradle sync in Android Studio)._
-
-2. Edit your `android/app/src/main/res/values/styles.xml` file:
+1. Edit your `android/app/src/main/res/values/styles.xml` file:
 
 ```xml
 <resources>
@@ -232,7 +215,7 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
 </resources>
 ```
 
-3. Edit your `android/app/src/main/AndroidManifest.xml` file:
+2. Edit your `android/app/src/main/AndroidManifest.xml` file:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -253,7 +236,7 @@ _⚠️  Don't forget going into the `android` directory to execute a `./gradl
 
 ```
 
-4. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
+3. Finally edit your `android/app/src/main/java/com/yourprojectname/MainActivity.java` file:
 
 ```java
 // …
