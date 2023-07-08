@@ -3,6 +3,7 @@ import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import BootSplash from "react-native-bootsplash";
 
 const bootSplashLogo = require("./assets/bootsplash_logo.png");
+const bootSplashManifest = require("./assets/manifest.json");
 
 const styles = StyleSheet.create({
   container: {
@@ -19,16 +20,6 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
   },
-  bootsplash: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF",
-  },
-  logo: {
-    height: 89,
-    width: 100,
-  },
 });
 
 // const fakeApiCallWithoutBadNetwork = (ms: number) =>
@@ -38,8 +29,15 @@ export const App = () => {
   const [bootSplashIsVisible, setBootSplashIsVisible] = React.useState(true);
   const [bootSplashLogoIsLoaded, setBootSplashLogoIsLoaded] =
     React.useState(false);
+
   const opacity = React.useRef(new Animated.Value(1));
   const translateY = React.useRef(new Animated.Value(0));
+
+  const bootSplashStyles = BootSplash.useStyles({
+    manifest: bootSplashManifest,
+    statusBarTranslucent: false,
+    navigationBarTranslucent: false,
+  });
 
   const init = async () => {
     // You can uncomment this line to add a delay on app startup
@@ -73,7 +71,9 @@ export const App = () => {
   };
 
   React.useEffect(() => {
-    bootSplashLogoIsLoaded && init();
+    if (bootSplashLogoIsLoaded) {
+      init();
+    }
   }, [bootSplashLogoIsLoaded]);
 
   return (
@@ -82,11 +82,7 @@ export const App = () => {
 
       {bootSplashIsVisible && (
         <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            styles.bootsplash,
-            { opacity: opacity.current },
-          ]}
+          style={[bootSplashStyles.container, { opacity: opacity.current }]}
         >
           <Animated.Image
             source={bootSplashLogo}
@@ -94,7 +90,7 @@ export const App = () => {
             resizeMode="contain"
             onLoadEnd={() => setBootSplashLogoIsLoaded(true)}
             style={[
-              styles.logo,
+              bootSplashStyles.logo,
               { transform: [{ translateY: translateY.current }] },
             ]}
           />

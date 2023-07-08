@@ -2,6 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import pc from "picocolors";
 import sharp from "sharp";
+import type { Manifest } from ".";
 
 const logoFileName = "bootsplash_logo";
 const xcassetName = "BootSplashLogo";
@@ -210,6 +211,18 @@ export const generate = async ({
     log.text(`\n    ${pc.underline("Assets")}`);
 
     fs.ensureDirSync(assetsPath);
+
+    const manifest: Manifest = {
+      logoHeight,
+      logoWidth,
+      backgroundColor,
+    };
+
+    fs.writeFileSync(
+      path.resolve(assetsPath, "manifest.json"),
+      JSON.stringify(manifest, null, 2) + "\n",
+      "utf-8",
+    );
 
     await Promise.all(
       [
