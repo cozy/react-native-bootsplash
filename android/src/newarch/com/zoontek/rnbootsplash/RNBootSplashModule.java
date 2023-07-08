@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 
 @ReactModule(name = RNBootSplashModuleImpl.NAME)
@@ -17,6 +18,16 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec {
   @NonNull
   public String getName() {
     return RNBootSplashModuleImpl.NAME;
+  }
+
+  @Override
+  public double getStatusBarHeight() {
+    return RNBootSplashModuleImpl.getStatusBarHeight(getReactApplicationContext());
+  }
+
+  @Override
+  public double getNavigationBarHeight() {
+    return RNBootSplashModuleImpl.getNavigationBarHeight(getReactApplicationContext());
   }
 
   @Override

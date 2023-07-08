@@ -125,7 +125,7 @@ RCT_EXPORT_MODULE();
     return [RNBootSplash hideLoadingView];
 }
 
-- (bool)visibleImpl {
+- (bool)isVisibleImpl {
   return ![RNBootSplash isLoadingViewHidden];
 }
 
@@ -137,26 +137,42 @@ RCT_EXPORT_MODULE();
   return std::make_shared<facebook::react::NativeRNBootSplashSpecJSI>(params);
 }
 
+- (NSNumber *)getStatusBarHeight {
+  return @(0);
+}
+
+- (NSNumber *)getNavigationBarHeight {
+  return @(0);
+}
+
 - (void)hide:(RCTPromiseResolveBlock)resolve
       reject:(RCTPromiseRejectBlock)reject {
   [self hideImpl:resolve];
 }
 
-- (NSNumber *)visible {
-  return @([self visibleImpl]);
+- (NSNumber *)isVisible {
+  return @([self isVisibleImpl]);
 }
 
 #else
 
 // Old architecture
 
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getStatusBarHeight) {
+  return @(0);
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getNavigationBarHeight) {
+  return @(0);
+}
+
 RCT_EXPORT_METHOD(hide:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
   [self hideImpl:resolve];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(visible) {
-  return @([self visibleImpl]);
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isVisible) {
+  return @([self isVisibleImpl]);
 }
 
 #endif

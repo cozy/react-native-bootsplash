@@ -1,11 +1,13 @@
 package com.zoontek.rnbootsplash;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.window.SplashScreen;
 import android.window.SplashScreenView;
@@ -19,6 +21,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.ReactConstants;
+import com.facebook.react.uimanager.PixelUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -142,6 +145,28 @@ public class RNBootSplashModuleImpl {
         }
       }
     });
+  }
+
+  public static double getStatusBarHeight(final ReactApplicationContext reactContext) {
+    final Resources resources = reactContext.getResources();
+
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int heightResId =
+      resources.getIdentifier("status_bar_height", "dimen", "android");
+
+    return heightResId > 0
+      ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(heightResId))
+      : 0;
+  }
+
+  public static double getNavigationBarHeight(final ReactApplicationContext reactContext) {
+    final Resources resources = reactContext.getResources();
+
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int heightResId =
+      resources.getIdentifier("navigation_bar_height", "dimen", "android");
+
+    return heightResId > 0 && !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
+      ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(heightResId))
+      : 0;
   }
 
   public static void hide(final ReactApplicationContext reactContext,

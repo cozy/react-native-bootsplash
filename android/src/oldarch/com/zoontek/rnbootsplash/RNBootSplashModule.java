@@ -21,6 +21,16 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule {
     return RNBootSplashModuleImpl.NAME;
   }
 
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  public double getStatusBarHeight() {
+    return RNBootSplashModuleImpl.getStatusBarHeight(getReactApplicationContext());
+  }
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  public double getNavigationBarHeight() {
+    return RNBootSplashModuleImpl.getNavigationBarHeight(getReactApplicationContext());
+  }
+
   @ReactMethod
   public void hide(final Promise promise) {
     RNBootSplashModuleImpl.hide(getReactApplicationContext(), promise);
