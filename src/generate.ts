@@ -213,13 +213,17 @@ export const generate = async ({
     fs.ensureDirSync(assetsPath);
 
     const manifest: Manifest = {
-      logoHeight,
-      logoWidth,
-      backgroundColor,
+      logo: {
+        height: logoHeight,
+        width: logoWidth,
+      },
+      light: {
+        backgroundColor,
+      },
     };
 
     fs.writeFileSync(
-      path.resolve(assetsPath, "manifest.json"),
+      path.resolve(assetsPath, "bootsplash_manifest.json"),
       JSON.stringify(manifest, null, 2) + "\n",
       "utf-8",
     );

@@ -12,9 +12,16 @@ export type Styles = {
 };
 
 export type Manifest = {
-  logoHeight: number;
-  logoWidth: number;
-  backgroundColor: string;
+  logo: {
+    height: number;
+    width: number;
+  };
+  brandingImage?: {
+    height: number;
+    width: number;
+  };
+  light: { backgroundColor: string };
+  dark?: { backgroundColor: string };
 };
 
 export type UseStylesConfig = {
@@ -34,10 +41,14 @@ export function isVisible(): Promise<boolean> {
 
 export function useStyles(config: UseStylesConfig) {
   const {
-    manifest: { logoHeight, logoWidth, backgroundColor },
+    manifest: { logo, light },
     statusBarTranslucent = false,
     navigationBarTranslucent = false,
   } = config;
+
+  const logoHeight = logo.height;
+  const logoWidth = logo.width;
+  const backgroundColor = light.backgroundColor;
 
   return useMemo<Styles>(() => {
     const container: ViewStyle = {
