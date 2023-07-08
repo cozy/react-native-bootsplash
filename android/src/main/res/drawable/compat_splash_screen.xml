@@ -10,4 +10,10 @@
             android:src="?windowSplashScreenAnimatedIcon"
             android:gravity="center" />
     </item>
+
+    <item android:gravity="fill" android:bottom="60dp">
+        <bitmap
+            android:src="?windowSplashScreenBrandingImage"
+            android:gravity="center_horizontal|bottom" />
+    </item>
 </layer-list>
