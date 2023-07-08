@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const AnimatedBootSplash = ({ onHide }: Props) => {
-  const [logoLoaded, setLogoLoaded] = useState(false);
+  const [ready, setReady] = useState(false);
   const [opacity] = useState(new Animated.Value(1));
   const [translateY] = useState(new Animated.Value(0));
 
@@ -21,7 +21,7 @@ export const AnimatedBootSplash = ({ onHide }: Props) => {
   });
 
   useEffect(() => {
-    if (!logoLoaded) {
+    if (!ready) {
       return;
     }
 
@@ -44,7 +44,7 @@ export const AnimatedBootSplash = ({ onHide }: Props) => {
         delay: 350,
       }).start(() => onHide());
     });
-  }, [logoLoaded]);
+  }, [ready]);
 
   return (
     <Animated.View style={[styles.container, { opacity }]}>
@@ -52,7 +52,7 @@ export const AnimatedBootSplash = ({ onHide }: Props) => {
         fadeDuration={0}
         resizeMode="contain"
         source={logo}
-        onLoadEnd={() => setLogoLoaded(true)}
+        onLoadEnd={() => setReady(true)}
         style={[styles.logo, { transform: [{ translateY }] }]}
       />
     </Animated.View>
