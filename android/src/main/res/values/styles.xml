@@ -1,5 +1,7 @@
 <resources>
     <style name="Theme.SplashScreen.Common" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:navigationBarColor">?attr/windowSplashScreenBackground</item>
+        <item name="android:statusBarColor">?attr/windowSplashScreenBackground</item>
         <item name="android:windowBackground">@drawable/compat_splash_screen</item>
     </style>
 
