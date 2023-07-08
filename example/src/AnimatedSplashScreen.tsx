@@ -10,8 +10,8 @@ type Props = {
 };
 
 export const AnimatedBootSplash = ({ onHide }: Props) => {
-  const [opacity] = useState(new Animated.Value(1));
-  const [translateY] = useState(new Animated.Value(0));
+  const [opacity] = useState(() => new Animated.Value(1));
+  const [translateY] = useState(() => new Animated.Value(0));
 
   const [logoReady, setLogoReady] = useState(false);
   const [layoutReady, setLayoutReady] = useState(false);
