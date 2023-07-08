@@ -10,9 +10,12 @@ type Props = {
 };
 
 export const AnimatedBootSplash = ({ onHide }: Props) => {
-  const [ready, setReady] = useState(false);
   const [opacity] = useState(new Animated.Value(1));
   const [translateY] = useState(new Animated.Value(0));
+
+  const [logoReady, setLogoReady] = useState(false);
+  const [layoutReady, setLayoutReady] = useState(false);
+  const ready = logoReady && layoutReady;
 
   const styles = BootSplash.useStyles({
     manifest,
@@ -25,7 +28,9 @@ export const AnimatedBootSplash = ({ onHide }: Props) => {
       return;
     }
 
-    BootSplash.hide().then(() => {
+    BootSplash.hide({
+      fade: false,
+    }).then(() => {
       Animated.stagger(250, [
         Animated.spring(translateY, {
           useNativeDriver: true,
@@ -47,12 +52,15 @@ export const AnimatedBootSplash = ({ onHide }: Props) => {
   }, [ready]);
 
   return (
-    <Animated.View style={[styles.container, { opacity }]}>
+    <Animated.View
+      onLayout={() => setLayoutReady(true)}
+      style={[styles.container, { opacity }]}
+    >
       <Animated.Image
         fadeDuration={0}
         resizeMode="contain"
         source={logo}
-        onLoadEnd={() => setReady(true)}
+        onLoadEnd={() => setLogoReady(true)}
         style={[styles.logo, { transform: [{ translateY }] }]}
       />
     </Animated.View>
