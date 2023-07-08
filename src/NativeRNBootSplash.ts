@@ -2,10 +2,9 @@ import type { TurboModule } from "react-native";
 import { TurboModuleRegistry } from "react-native";
 
 export interface Spec extends TurboModule {
-  getStatusBarHeight(): number;
-  getNavigationBarHeight(): number;
-  hide(): Promise<void>;
-  isVisible(): boolean;
+  getConstants: () => { navigationBarHeight: number; statusBarHeight: number };
+  hide(fade: boolean): Promise<void>;
+  isVisible(): Promise<boolean>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>("RNBootSplash");

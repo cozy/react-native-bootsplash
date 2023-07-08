@@ -1,9 +1,13 @@
 import NativeModule from "./NativeRNBootSplash";
 
-export function hide(): Promise<void> {
-  return NativeModule.hide().then(() => {});
+export type Config = { fade?: boolean };
+
+export function hide(config: Config = {}): Promise<void> {
+  const { fade = false } = config;
+  return NativeModule.hide(fade).then(() => {});
 }
-export function isVisible(): boolean {
+
+export function isVisible(): Promise<boolean> {
   return NativeModule.isVisible();
 }
 

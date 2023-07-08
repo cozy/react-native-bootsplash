@@ -4,8 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+
+import java.util.Map;
 
 @ReactModule(name = RNBootSplashModuleImpl.NAME)
 public class RNBootSplashModule extends NativeRNBootSplashSpec {
@@ -21,22 +22,17 @@ public class RNBootSplashModule extends NativeRNBootSplashSpec {
   }
 
   @Override
-  public double getStatusBarHeight() {
-    return RNBootSplashModuleImpl.getStatusBarHeight(getReactApplicationContext());
+  protected Map<String, Object> getTypedExportedConstants() {
+    return RNBootSplashModuleImpl.getConstants(getReactApplicationContext());
   }
 
   @Override
-  public double getNavigationBarHeight() {
-    return RNBootSplashModuleImpl.getNavigationBarHeight(getReactApplicationContext());
+  public void hide(boolean fade, Promise promise) {
+    RNBootSplashModuleImpl.hide(getReactApplicationContext(), fade, promise);
   }
 
   @Override
-  public void hide(Promise promise) {
-    RNBootSplashModuleImpl.hide(getReactApplicationContext(), promise);
-  }
-
-  @Override
-  public boolean isVisible() {
-    return RNBootSplashModuleImpl.isVisible();
+  public void isVisible(Promise promise) {
+    RNBootSplashModuleImpl.isVisible(promise);
   }
 }

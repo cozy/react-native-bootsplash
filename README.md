@@ -264,7 +264,7 @@ public class MainActivity extends ReactActivity {
 #### Method type
 
 ```ts
-type hide = () => Promise<void>;
+type hide = (config?: { fade?: boolean }) => Promise<void>;
 ```
 
 #### Usage
@@ -272,7 +272,8 @@ type hide = () => Promise<void>;
 ```js
 import BootSplash from "react-native-bootsplash";
 
-BootSplash.hide();
+BootSplash.hide(); // immediate
+BootSplash.hide({ fade: true }); // fade
 ```
 
 ### isVisible()
@@ -280,7 +281,7 @@ BootSplash.hide();
 #### Method type
 
 ```ts
-type isVisible = () => boolean;
+type isVisible = () => Promise<boolean>;
 ```
 
 #### Usage
@@ -288,7 +289,7 @@ type isVisible = () => boolean;
 ```js
 import BootSplash from "react-native-bootsplash";
 
-console.log(BootSplash.isVisible());
+RNBootSplash.isVisible().then((value) => console.log(value));
 ```
 
 ## Real world example
@@ -305,7 +306,7 @@ function App() {
     };
 
     init().finally(async () => {
-      await BootSplash.hide();
+      await BootSplash.hide({ fade: true });
       console.log("BootSplash has been hidden successfully");
     });
   }, []);
@@ -343,8 +344,8 @@ To add the mocks, create a file _jest/setup.js_ (or any other file name) contain
 ```js
 jest.mock("react-native-bootsplash", () => {
   return {
-    hide: jest.fn().mockResolvedValueOnce(),
-    visible: jest.fn().mockReturnValue(false),
+    hide: jest.fn().mockResolvedValue(),
+    isVisible: jest.fn().mockResolvedValue(false),
   };
 });
 ```

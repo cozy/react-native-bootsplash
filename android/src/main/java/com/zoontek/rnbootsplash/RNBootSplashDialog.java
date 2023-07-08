@@ -11,6 +11,9 @@ import androidx.annotation.StyleRes;
 
 public class RNBootSplashDialog extends Dialog {
 
+  @StyleRes
+  private int mWindowAnimationsResId = -1;
+
   public RNBootSplashDialog(@NonNull Context context, @StyleRes int themeResId) {
     super(context, themeResId);
     setCancelable(false);
@@ -27,9 +30,20 @@ public class RNBootSplashDialog extends Dialog {
     final Window window = this.getWindow();
 
     if (window != null) {
-      window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+      window.setLayout(
+        WindowManager.LayoutParams.MATCH_PARENT,
+        WindowManager.LayoutParams.MATCH_PARENT
+      );
+
+      if (mWindowAnimationsResId != -1) {
+        window.setWindowAnimations(mWindowAnimationsResId);
+      }
     }
 
     super.onCreate(savedInstanceState);
+  }
+
+  public void setWindowAnimations(@StyleRes int windowAnimationsResId) {
+    mWindowAnimationsResId = windowAnimationsResId;
   }
 }

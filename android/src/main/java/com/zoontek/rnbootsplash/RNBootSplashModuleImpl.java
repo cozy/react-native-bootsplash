@@ -23,6 +23,8 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.ReactConstants;
 import com.facebook.react.uimanager.PixelUtil;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,12 +33,17 @@ public class RNBootSplashModuleImpl {
   public static final String NAME = "RNBootSplash";
 
   private static final RNBootSplashQueue<Promise> mPromiseQueue = new RNBootSplashQueue<>();
-  private static boolean mShouldKeepOnScreen = true;
+  private static boolean mShouldKeepOnScreen = false;
+
+  @StyleRes
+  private static int mThemeResId = -1;
 
   @Nullable
   private static RNBootSplashDialog mDialog = null;
 
   protected static void init(@Nullable final Activity activity, @StyleRes int themeResId) {
+    mThemeResId = themeResId;
+
     if (activity == null) {
       FLog.w(ReactConstants.TAG, NAME + ": Ignored initialization, current activity is null.");
       return;
@@ -57,6 +64,7 @@ public class RNBootSplashModuleImpl {
 
     // Keep the splash screen on-screen until Dialog is shown
     final View contentView = activity.findViewById(android.R.id.content);
+    mShouldKeepOnScreen = true;
 
     contentView
       .getViewTreeObserver()
@@ -88,7 +96,7 @@ public class RNBootSplashModuleImpl {
         });
     }
 
-    mDialog = new RNBootSplashDialog(activity, themeResId);
+    mDialog = new RNBootSplashDialog(activity, mThemeResId);
 
     mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
       @Override
@@ -114,7 +122,8 @@ public class RNBootSplashModuleImpl {
     }
   }
 
-  private static void hideAndClearPromiseQueue(final ReactApplicationContext reactContext) {
+  private static void hideAndClearPromiseQueue(final ReactApplicationContext reactContext,
+                                               final boolean fade) {
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -127,11 +136,42 @@ public class RNBootSplashModuleImpl {
             @Override
             public void run() {
               timer.cancel();
-              hideAndClearPromiseQueue(reactContext);
+              hideAndClearPromiseQueue(reactContext, fade);
             }
           }, 100);
         } else if (mDialog == null) {
           clearPromiseQueue();
+        } else if (fade) {
+          // Create a new Dialog instance with fade out animation
+          final RNBootSplashDialog[] tmp = {mDialog};
+
+          mDialog = new RNBootSplashDialog(activity, mThemeResId);
+          mDialog.setWindowAnimations(R.style.BootSplashFadeOutAnimation);
+
+          mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+              tmp[0].dismiss();
+            }
+          });
+
+          tmp[0].setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+              tmp[0] = null;
+              mDialog.dismiss();
+            }
+          });
+
+          mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+              mDialog = null;
+              clearPromiseQueue();
+            }
+          });
+
+          mDialog.show();
         } else {
           mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -147,35 +187,38 @@ public class RNBootSplashModuleImpl {
     });
   }
 
-  public static double getStatusBarHeight(final ReactApplicationContext reactContext) {
+  public static Map<String, Object> getConstants(final ReactApplicationContext reactContext) {
     final Resources resources = reactContext.getResources();
+    HashMap<String, Object> constants = new HashMap<>();
 
-    @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int heightResId =
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int statusBarHeightResId =
       resources.getIdentifier("status_bar_height", "dimen", "android");
 
-    return heightResId > 0
-      ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(heightResId))
-      : 0;
-  }
-
-  public static double getNavigationBarHeight(final ReactApplicationContext reactContext) {
-    final Resources resources = reactContext.getResources();
-
-    @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int heightResId =
+    @SuppressLint({"InternalInsetResource", "DiscouragedApi"}) final int navigationBarHeightResId =
       resources.getIdentifier("navigation_bar_height", "dimen", "android");
 
-    return heightResId > 0 && !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
-      ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(heightResId))
+    float statusBarHeight = statusBarHeightResId > 0
+      ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(statusBarHeightResId))
       : 0;
+
+    float navigationBarHeight = navigationBarHeightResId > 0 && !ViewConfiguration.get(reactContext).hasPermanentMenuKey()
+      ? PixelUtil.toDIPFromPixel(resources.getDimensionPixelSize(navigationBarHeightResId))
+      : 0;
+
+    constants.put("statusBarHeight", statusBarHeight);
+    constants.put("navigationBarHeight", navigationBarHeight);
+
+    return constants;
   }
 
   public static void hide(final ReactApplicationContext reactContext,
+                          final boolean fade,
                           final Promise promise) {
     mPromiseQueue.push(promise);
-    hideAndClearPromiseQueue(reactContext);
+    hideAndClearPromiseQueue(reactContext, fade);
   }
 
-  public static boolean isVisible() {
-    return mShouldKeepOnScreen || mDialog != null;
+  public static void isVisible(final Promise promise) {
+    promise.resolve(mShouldKeepOnScreen || mDialog != null);
   }
 }

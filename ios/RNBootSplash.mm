@@ -12,11 +12,16 @@
 static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = nil;
 static UIView *_loadingView = nil;
 static UIView *_rootView = nil;
+static bool _fade = false;
 static bool _nativeHidden = false;
 
 @implementation RNBootSplash
 
 RCT_EXPORT_MODULE();
+
++ (BOOL)requiresMainQueueSetup {
+  return YES;
+}
 
 - (dispatch_queue_t)methodQueue {
   return dispatch_get_main_queue();
@@ -42,13 +47,31 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)hideLoadingView {
-  if (![self isLoadingViewHidden]) {
+  if ([self isLoadingViewHidden])
+    return [RNBootSplash clearResolveQueue];
+
+  if (_fade) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [UIView transitionWithView:_rootView
+                        duration:0.250
+                         options:UIViewAnimationOptionTransitionCrossDissolve
+                      animations:^{
+        _loadingView.hidden = YES;
+      }
+                      completion:^(__unused BOOL finished) {
+        [_loadingView removeFromSuperview];
+        _loadingView = nil;
+
+        return [RNBootSplash clearResolveQueue];
+      }];
+    });
+  } else {
     _loadingView.hidden = YES;
     [_loadingView removeFromSuperview];
     _loadingView = nil;
-  }
 
-  return [RNBootSplash clearResolveQueue];
+    return [RNBootSplash clearResolveQueue];
+  }
 }
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
@@ -112,7 +135,15 @@ RCT_EXPORT_MODULE();
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)hideImpl:(RCTPromiseResolveBlock)resolve {
+- (NSDictionary *)constantsToExport {
+  return @{
+    @"statusBarHeight": @(0),
+    @"navigationBarHeight": @(0)
+  };
+}
+
+- (void)hideImpl:(BOOL)fade
+         resolve:(RCTPromiseResolveBlock)resolve {
   if (_resolveQueue == nil)
     _resolveQueue = [[NSMutableArray alloc] init];
 
@@ -121,12 +152,14 @@ RCT_EXPORT_MODULE();
   if ([RNBootSplash isLoadingViewHidden] || RCTRunningInAppExtension())
     return [RNBootSplash clearResolveQueue];
 
+  _fade = fade;
+
   if (_nativeHidden)
     return [RNBootSplash hideLoadingView];
 }
 
-- (bool)isVisibleImpl {
-  return ![RNBootSplash isLoadingViewHidden];
+- (void)isVisibleImpl:(RCTPromiseResolveBlock)resolve {
+  resolve(@(![RNBootSplash isLoadingViewHidden]));
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -137,42 +170,34 @@ RCT_EXPORT_MODULE();
   return std::make_shared<facebook::react::NativeRNBootSplashSpecJSI>(params);
 }
 
-- (NSNumber *)getStatusBarHeight {
-  return @(0);
+- (facebook::react::ModuleConstants<JS::NativeRNBootSplash::Constants::Builder>)getConstants {
+  return [self constantsToExport];
 }
 
-- (NSNumber *)getNavigationBarHeight {
-  return @(0);
-}
-
-- (void)hide:(RCTPromiseResolveBlock)resolve
+- (void)hide:(BOOL)fade
+     resolve:(RCTPromiseResolveBlock)resolve
       reject:(RCTPromiseRejectBlock)reject {
-  [self hideImpl:resolve];
+  [self hideImpl:fade resolve:resolve];
 }
 
-- (NSNumber *)isVisible {
-  return @([self isVisibleImpl]);
+- (void)isVisible:(RCTPromiseResolveBlock)resolve
+           reject:(RCTPromiseRejectBlock)reject {
+  [self isVisibleImpl:resolve];
 }
 
 #else
 
 // Old architecture
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getStatusBarHeight) {
-  return @(0);
-}
-
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getNavigationBarHeight) {
-  return @(0);
-}
-
-RCT_EXPORT_METHOD(hide:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(hide:(BOOL)fade
+                  resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-  [self hideImpl:resolve];
+  [self hideImpl:fade resolve:resolve];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isVisible) {
-  return @([self isVisibleImpl]);
+RCT_EXPORT_METHOD(isVisible:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+  [self isVisibleImpl:resolve];
 }
 
 #endif

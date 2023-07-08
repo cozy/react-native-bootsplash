@@ -1,8 +1,11 @@
-@module("react-native-bootsplash") @scope("default")
-external hide: unit => Js.Promise.t<unit> = "hide"
+type config = {fade: bool}
 
 @module("react-native-bootsplash") @scope("default")
-external visible: unit => boolean = "visible"
+external hide: config => Js.Promise.t<unit> = "hide"
+
+@module("react-native-bootsplash") @scope("default")
+external isVisible: unit => Js.Promise.t<boolean> = "isVisible"
+
 /*
 ## Usage
 
@@ -13,7 +16,7 @@ external visible: unit => boolean = "visible"
 Or
 
  ```rescript
-RNBootSplash.hide()->Js.Promise.then_(() => {
+RNBootSplash.hide({fade: true})->Js.Promise.then_(() => {
   Js.log("RN BootSplash: fading is over")
   Js.Promise.resolve()
 }, _)->Js.Promise.catch(error => {
