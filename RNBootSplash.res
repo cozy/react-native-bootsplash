@@ -10,12 +10,12 @@ external isVisible: unit => Js.Promise.t<boolean> = "isVisible"
 ## Usage
 
 ```rescript
- RNBootSplash.hide()->ignore
+RNBootSplash.hide({fade: true})->ignore
 ```
 
 Or
 
- ```rescript
+```rescript
 RNBootSplash.hide({fade: true})->Js.Promise.then_(() => {
   Js.log("RN BootSplash: fading is over")
   Js.Promise.resolve()

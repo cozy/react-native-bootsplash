@@ -251,7 +251,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    BootSplash.init(this,R.style.BootTheme); // ⬅️ initialize the splash screen
+    RNBootSplash.init(this,R.style.BootTheme); // ⬅️ initialize the splash screen
     super.onCreate(savedInstanceState); // or super.onCreate(null) with react-native-screens
   }
 }
