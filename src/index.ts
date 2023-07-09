@@ -1,14 +1,16 @@
-import { useMemo } from "react";
-import { ImageStyle, Platform, StyleSheet, ViewStyle } from "react-native";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  ImageProps,
+  ImageRequireSource,
+  Platform,
+  StyleSheet,
+  ViewProps,
+  ViewStyle,
+} from "react-native";
 import NativeModule from "./NativeRNBootSplash";
 
 export type HideConfig = {
   fade?: boolean;
-};
-
-export type Styles = {
-  container: ViewStyle;
-  logo: ImageStyle;
 };
 
 export type Manifest = {
@@ -16,18 +18,29 @@ export type Manifest = {
     height: number;
     width: number;
   };
-  brandingImage?: {
-    height: number;
-    width: number;
-  };
+  // branding?: {
+  //   height: number;
+  //   width: number;
+  // };
   light: { backgroundColor: string };
   dark?: { backgroundColor: string };
 };
 
-export type UseStylesConfig = {
+export type UseHideAnimationConfig = {
   manifest: Manifest;
+  logo: ImageRequireSource;
+  // branding?: ImageRequireSource;
+
+  animate: () => void;
+
   statusBarTranslucent?: boolean;
   navigationBarTranslucent?: boolean;
+};
+
+export type UseHideAnimation = {
+  container: ViewProps;
+  logo: ImageProps;
+  // branding?: ImageProps;
 };
 
 export function hide(config: HideConfig = {}): Promise<void> {
@@ -39,29 +52,73 @@ export function isVisible(): Promise<boolean> {
   return NativeModule.isVisible();
 }
 
-export function useStyles(config: UseStylesConfig) {
+export function useHideAnimation(config: UseHideAnimationConfig) {
   const {
-    manifest: { logo, light },
+    manifest,
+    logo: logoSrc,
+    // branding: brandingSrc,
+
+    animate,
+
     statusBarTranslucent = false,
     navigationBarTranslucent = false,
   } = config;
 
-  const logoHeight = logo.height;
-  const logoWidth = logo.width;
-  const backgroundColor = light.backgroundColor;
+  const animateFn = useRef(animate);
+  const layoutReady = useRef(false);
+  const logoReady = useRef(false);
+  const animateHasBeenCalled = useRef(false);
 
-  return useMemo<Styles>(() => {
-    const container: ViewStyle = {
+  useEffect(() => {
+    animateFn.current = animate;
+  });
+
+  const maybeRunAnimate = useCallback(() => {
+    if (
+      layoutReady.current &&
+      logoReady.current &&
+      !animateHasBeenCalled.current
+    ) {
+      animateHasBeenCalled.current = true;
+
+      hide({ fade: false })
+        .then(() => animateFn.current())
+        .catch(() => {});
+    }
+  }, []);
+
+  const { height: logoHeight, width: logoWidth } = manifest.logo;
+  const { backgroundColor } = manifest.light;
+
+  return useMemo<UseHideAnimation>(() => {
+    const containerStyle: ViewStyle = {
       ...StyleSheet.absoluteFillObject,
-      flex: 1,
-      backgroundColor,
       alignItems: "center",
+      flex: 1,
       justifyContent: "center",
+      backgroundColor,
     };
 
-    const logo: ImageStyle = {
-      height: logoHeight,
-      width: logoWidth,
+    const container: ViewProps = {
+      onLayout: () => {
+        layoutReady.current = true;
+        maybeRunAnimate();
+      },
+      style: containerStyle,
+    };
+
+    const logo: ImageProps = {
+      fadeDuration: 0,
+      resizeMode: "contain",
+      source: logoSrc,
+      onLoadEnd: () => {
+        logoReady.current = true;
+        maybeRunAnimate();
+      },
+      style: {
+        height: logoHeight,
+        width: logoWidth,
+      },
     };
 
     if (Platform.OS !== "android") {
@@ -74,12 +131,19 @@ export function useStyles(config: UseStylesConfig) {
     return {
       container: {
         ...container,
-        marginTop: statusBarTranslucent ? 0 : -statusBarHeight,
-        marginBottom: navigationBarTranslucent ? 0 : -navigationBarHeight,
+        style: {
+          ...containerStyle,
+          marginTop: statusBarTranslucent ? undefined : -statusBarHeight,
+          marginBottom: navigationBarTranslucent
+            ? undefined
+            : -navigationBarHeight,
+        },
       },
       logo,
     };
   }, [
+    maybeRunAnimate,
+    logoSrc,
     logoHeight,
     logoWidth,
     backgroundColor,
@@ -91,5 +155,5 @@ export function useStyles(config: UseStylesConfig) {
 export default {
   hide,
   isVisible,
-  useStyles,
+  useHideAnimation,
 };

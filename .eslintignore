@@ -1,3 +1,4 @@
-.eslintrc.js
+example/
 dist/
 react-native.config.js
+.eslintrc.js

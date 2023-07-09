@@ -28,7 +28,7 @@ export const App = () => {
 
       {visible && (
         <AnimatedBootSplash
-          onHide={() => {
+          onAnimationEnd={() => {
             setVisible(false);
           }}
         />
