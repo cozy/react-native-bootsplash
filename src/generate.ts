@@ -34,6 +34,8 @@ const ContentsJson = `{
 }
 `;
 
+type Hexadecimal = ["#", string, string, string, string, string, string];
+
 const getStoryboard = ({
   height,
   width,
@@ -41,7 +43,7 @@ const getStoryboard = ({
 }: {
   height: number;
   width: number;
-  backgroundColor: string;
+  backgroundColor: Hexadecimal;
 }) => {
   const r = (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15);
   const g = (parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15);
@@ -103,14 +105,15 @@ const log = {
   warn: (text: string) => console.log(pc.yellow(text)),
 };
 
-const toFullHexadecimal = (hex: string) => {
+const toFullHexadecimal = (hex: string): Hexadecimal => {
   const up = hex.toUpperCase().replace(/[^0-9A-F]/g, "");
+  const [A = "", B = "", C = "", D = "", E = "", F = ""] = up;
 
   if (up.length === 6) {
-    return "#" + up;
+    return ["#", A, B, C, D, E, F];
   }
   if (up.length === 3) {
-    return "#" + up[0] + up[0] + up[1] + up[1] + up[2] + up[2];
+    return ["#", A, A, B, B, C, C];
   }
 
   log.error("--background-color value is not a valid hexadecimal color.");
@@ -207,7 +210,7 @@ export const generate = async ({
           : ""),
     );
 
-  if (assetsPath) {
+  if (assetsPath != null) {
     log.text(`\n    ${pc.underline("Assets")}`);
 
     fs.ensureDirSync(assetsPath);
@@ -264,7 +267,8 @@ export const generate = async ({
     fs.ensureDirSync(valuesPath);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
-    const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHex}</color>`;
+    const backgroundColorHexStr = backgroundColorHex.join("");
+    const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHexStr}</color>`;
 
     if (fs.existsSync(colorsXmlPath)) {
       const colorsXml = fs.readFileSync(colorsXmlPath, "utf-8");
