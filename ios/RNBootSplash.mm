@@ -39,7 +39,7 @@ RCT_EXPORT_MODULE();
   }
 }
 
-+ (void)hideLoadingView {
++ (void)hideAndClearPromiseQueue {
   if (![self isLoadingViewVisible]) {
     return [RNBootSplash clearResolveQueue];
   }
@@ -85,7 +85,7 @@ RCT_EXPORT_MODULE();
 
       // hide has been called before native launch screen fade out
       if ([_resolveQueue count] > 0) {
-        [self hideLoadingView];
+        [self hideAndClearPromiseQueue];
       }
     }];
 
@@ -125,7 +125,7 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)onJavaScriptDidFailToLoad {
-  [self hideLoadingView];
+  [self hideAndClearPromiseQueue];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -146,7 +146,7 @@ RCT_EXPORT_MODULE();
   _fade = fade;
 
   if (_nativeHidden) {
-    return [RNBootSplash hideLoadingView];
+    return [RNBootSplash hideAndClearPromiseQueue];
   }
 }
 

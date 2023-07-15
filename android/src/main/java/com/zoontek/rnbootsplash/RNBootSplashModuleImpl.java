@@ -42,6 +42,11 @@ public class RNBootSplashModuleImpl {
   private static RNBootSplashDialog mDialog = null;
 
   protected static void init(@Nullable final Activity activity, @StyleRes int themeResId) {
+    if (mThemeResId != -1) {
+      FLog.w(ReactConstants.TAG, NAME + ": Ignored initialization, module is already initialized.");
+      return;
+    }
+
     mThemeResId = themeResId;
 
     if (activity == null) {
@@ -117,8 +122,9 @@ public class RNBootSplashModuleImpl {
     while (!mPromiseQueue.isEmpty()) {
       Promise promise = mPromiseQueue.shift();
 
-      if (promise != null)
+      if (promise != null) {
         promise.resolve(true);
+      }
     }
   }
 
