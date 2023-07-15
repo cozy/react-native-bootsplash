@@ -69,8 +69,8 @@ const getStoryboard = ({
                         <subviews>
                             <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="BootSplashLogo" translatesAutoresizingMaskIntoConstraints="NO" id="3lX-Ut-9ad">
                                 <rect key="frame" x="${(375 - width) / 2}" y="${
-    (667 - height) / 2
-  }" width="${width}" height="${height}"/>
+                                  (667 - height) / 2
+                                }" width="${width}" height="${height}"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
                                 </accessibility>
@@ -411,11 +411,11 @@ export const generate = async ({
   log.text(`
  ${pc.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
  ${pc.blue("┃")}  💖  ${pc.bold(
-    "Love this library? Consider sponsoring!",
-  )}  ${pc.blue("┃")}
+   "Love this library? Consider sponsoring!",
+ )}  ${pc.blue("┃")}
  ${pc.blue("┃")}  ${pc.underline(
-    "https://github.com/sponsors/zoontek",
-  )}          ${pc.blue("┃")}
+   "https://github.com/sponsors/zoontek",
+ )}          ${pc.blue("┃")}
  ${pc.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
 `);
 
