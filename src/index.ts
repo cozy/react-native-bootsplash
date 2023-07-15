@@ -9,21 +9,19 @@ import {
 } from "react-native";
 import NativeModule from "./NativeRNBootSplash";
 
-export type HideConfig = {
+export type Config = {
   fade?: boolean;
 };
 
+type Dimensions = {
+  height: number;
+  width: number;
+};
+
 export type Manifest = {
-  logo: {
-    height: number;
-    width: number;
-  };
-  // branding?: {
-  //   height: number;
-  //   width: number;
-  // };
-  light: { backgroundColor: string };
-  dark?: { backgroundColor: string };
+  backgroundColor: string;
+  logo: Dimensions;
+  // branding?: Dimensions;
 };
 
 export type UseHideAnimationConfig = {
@@ -43,7 +41,7 @@ export type UseHideAnimation = {
   // branding?: ImageProps;
 };
 
-export function hide(config: HideConfig = {}): Promise<void> {
+export function hide(config: Config = {}): Promise<void> {
   const { fade = false } = config;
   return NativeModule.hide(fade).then(() => {});
 }
@@ -88,7 +86,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   }, []);
 
   const { height: logoHeight, width: logoWidth } = manifest.logo;
-  const { backgroundColor } = manifest.light;
+  const { backgroundColor } = manifest;
 
   return useMemo<UseHideAnimation>(() => {
     const containerStyle: ViewStyle = {
