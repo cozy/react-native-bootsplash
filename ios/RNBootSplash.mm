@@ -9,7 +9,7 @@
 #import <React/RCTRootView.h>
 #endif
 
-static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = nil;
+static NSMutableArray<RCTPromiseResolveBlock> *_resolveQueue = [[NSMutableArray alloc] init];
 static UIView *_loadingView = nil;
 static UIView *_rootView = nil;
 static bool _fade = false;
@@ -32,10 +32,6 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)clearResolveQueue {
-  if (_resolveQueue == nil) {
-    return;
-  }
-
   while ([_resolveQueue count] > 0) {
     RCTPromiseResolveBlock resolve = [_resolveQueue objectAtIndex:0];
     [_resolveQueue removeObjectAtIndex:0];
@@ -74,56 +70,54 @@ RCT_EXPORT_MODULE();
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(UIView * _Nullable)rootView {
-  if (rootView == nil
-#ifdef RCT_NEW_ARCH_ENABLED
-      || ![rootView isKindOfClass:[RCTFabricSurfaceHostingProxyRootView class]]
-#else
-      || ![rootView isKindOfClass:[RCTRootView class]]
-#endif
-      || _rootView != nil
-      || _resolveQueue != nil // hide has already been called, abort init
-      || RCTRunningInAppExtension()) {
+  if (RCTRunningInAppExtension()) {
     return;
   }
 
+  static dispatch_once_t onceToken;
+
+  dispatch_once(&onceToken, ^(void) {
+    [NSTimer scheduledTimerWithTimeInterval:0.35
+                                    repeats:NO
+                                      block:^(NSTimer * _Nonnull timer) {
+      // wait for native iOS launch screen to fade out
+      _nativeHidden = true;
+
+      // hide has been called before native launch screen fade out
+      if ([_resolveQueue count] > 0) {
+        [self hideLoadingView];
+      }
+    }];
+
 #ifdef RCT_NEW_ARCH_ENABLED
-  RCTFabricSurfaceHostingProxyRootView *proxy = (RCTFabricSurfaceHostingProxyRootView *)rootView;
-  _rootView = (RCTSurfaceHostingView *)proxy.surface.view;
+    if (rootView != nil && [rootView isKindOfClass:[RCTFabricSurfaceHostingProxyRootView class]]) {
+      RCTFabricSurfaceHostingProxyRootView *proxy = (RCTFabricSurfaceHostingProxyRootView *)rootView;
+      _rootView = (RCTSurfaceHostingView *)proxy.surface.view;
 #else
-  _rootView = (RCTRootView *)rootView;
+    if (rootView != nil && [rootView isKindOfClass:[RCTRootView class]]) {
+      _rootView = (RCTRootView *)rootView;
 #endif
+      UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
 
-  UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+      _loadingView = [[storyboard instantiateInitialViewController] view];
+      _loadingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+      _loadingView.frame = _rootView.bounds;
+      _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
+      _loadingView.hidden = NO;
 
-  _loadingView = [[storyboard instantiateInitialViewController] view];
-  _loadingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  _loadingView.frame = _rootView.bounds;
-  _loadingView.center = (CGPoint){CGRectGetMidX(_rootView.bounds), CGRectGetMidY(_rootView.bounds)};
-  _loadingView.hidden = NO;
+      [_rootView addSubview:_loadingView];
 
-  [_rootView addSubview:_loadingView];
+      [[NSNotificationCenter defaultCenter] addObserver:self
+                                               selector:@selector(onJavaScriptDidLoad)
+                                                   name:RCTJavaScriptDidLoadNotification
+                                                 object:nil];
 
-  [NSTimer scheduledTimerWithTimeInterval:0.35
-                                  repeats:NO
-                                    block:^(NSTimer * _Nonnull timer) {
-    // wait for native iOS launch screen to fade out
-    _nativeHidden = true;
-
-    // hide has been called before native launch screen fade out
-    if (_resolveQueue != nil) {
-      [self hideLoadingView];
+      [[NSNotificationCenter defaultCenter] addObserver:self
+                                               selector:@selector(onJavaScriptDidFailToLoad)
+                                                   name:RCTJavaScriptDidFailToLoadNotification
+                                                 object:nil];
     }
-  }];
-
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(onJavaScriptDidLoad)
-                                               name:RCTJavaScriptDidLoadNotification
-                                             object:nil];
-
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(onJavaScriptDidFailToLoad)
-                                               name:RCTJavaScriptDidFailToLoadNotification
-                                             object:nil];
+  });
 }
 
 + (void)onJavaScriptDidLoad {
@@ -144,16 +138,11 @@ RCT_EXPORT_MODULE();
 
 - (void)hideImpl:(BOOL)fade
          resolve:(RCTPromiseResolveBlock)resolve {
-  if (_resolveQueue == nil) {
-    _resolveQueue = [[NSMutableArray alloc] init];
+  if (RCTRunningInAppExtension()) {
+    return resolve(@(true));
   }
 
   [_resolveQueue addObject:resolve];
-
-  if (![RNBootSplash isLoadingViewVisible] || RCTRunningInAppExtension()) {
-    return [RNBootSplash clearResolveQueue];
-  }
-
   _fade = fade;
 
   if (_nativeHidden) {
