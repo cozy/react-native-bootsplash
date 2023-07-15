@@ -27,17 +27,14 @@ RCT_EXPORT_MODULE();
   return dispatch_get_main_queue();
 }
 
-+ (bool)isLoadingViewHidden {
-  return _loadingView == nil || [_loadingView isHidden];
-}
-
-+ (bool)hasResolveQueue {
-  return _resolveQueue != nil;
++ (bool)isLoadingViewVisible {
+  return _loadingView != nil && ![_loadingView isHidden];
 }
 
 + (void)clearResolveQueue {
-  if (![self hasResolveQueue])
+  if (_resolveQueue == nil) {
     return;
+  }
 
   while ([_resolveQueue count] > 0) {
     RCTPromiseResolveBlock resolve = [_resolveQueue objectAtIndex:0];
@@ -47,8 +44,9 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)hideLoadingView {
-  if ([self isLoadingViewHidden])
+  if (![self isLoadingViewVisible]) {
     return [RNBootSplash clearResolveQueue];
+  }
 
   if (_fade) {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -83,9 +81,10 @@ RCT_EXPORT_MODULE();
       || ![rootView isKindOfClass:[RCTRootView class]]
 #endif
       || _rootView != nil
-      || [self hasResolveQueue] // hide has already been called, abort init
-      || RCTRunningInAppExtension())
+      || _resolveQueue != nil // hide has already been called, abort init
+      || RCTRunningInAppExtension()) {
     return;
+  }
 
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTFabricSurfaceHostingProxyRootView *proxy = (RCTFabricSurfaceHostingProxyRootView *)rootView;
@@ -111,8 +110,9 @@ RCT_EXPORT_MODULE();
     _nativeHidden = true;
 
     // hide has been called before native launch screen fade out
-    if ([self hasResolveQueue])
+    if (_resolveQueue != nil) {
       [self hideLoadingView];
+    }
   }];
 
   [[NSNotificationCenter defaultCenter] addObserver:self
@@ -144,22 +144,25 @@ RCT_EXPORT_MODULE();
 
 - (void)hideImpl:(BOOL)fade
          resolve:(RCTPromiseResolveBlock)resolve {
-  if (_resolveQueue == nil)
+  if (_resolveQueue == nil) {
     _resolveQueue = [[NSMutableArray alloc] init];
+  }
 
   [_resolveQueue addObject:resolve];
 
-  if ([RNBootSplash isLoadingViewHidden] || RCTRunningInAppExtension())
+  if (![RNBootSplash isLoadingViewVisible] || RCTRunningInAppExtension()) {
     return [RNBootSplash clearResolveQueue];
+  }
 
   _fade = fade;
 
-  if (_nativeHidden)
+  if (_nativeHidden) {
     return [RNBootSplash hideLoadingView];
+  }
 }
 
 - (void)isVisibleImpl:(RCTPromiseResolveBlock)resolve {
-  resolve(@(![RNBootSplash isLoadingViewHidden]));
+  resolve(@([RNBootSplash isLoadingViewVisible]));
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
