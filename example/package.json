@@ -19,9 +19,9 @@
     "react-native-bootsplash": "file:../"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.9",
-    "@babel/preset-env": "^7.22.9",
-    "@babel/runtime": "^7.22.6",
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
     "@react-native/metro-config": "^0.72.9",
     "@types/react": "^18.2.15",
     "metro-react-native-babel-preset": "0.76.7",

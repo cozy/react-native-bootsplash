@@ -22,7 +22,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.22.9.tgz#71cdb00a1ce3a329ce4cbec3a44f9fef35669730"
   integrity sha512-5UamI7xkUcJ3i9qVDS+KFDEK8/7oJ55/sJMB1Ge7IEapr7KfdfV/HErR+koZwOfd+SgtFKOKRhRakdg++DcJpQ==
 
-"@babel/core@^7.13.16", "@babel/core@^7.20.0", "@babel/core@^7.22.9":
+"@babel/core@^7.13.16", "@babel/core@^7.20.0":
   version "7.22.9"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.22.9.tgz#bd96492c68822198f33e8a256061da3cf391f58f"
   integrity sha512-G2EgeufBcYw27U4hhoIwFcgc1XU7TlXJ3mv04oOv1WCuo900U/anZSPzEqNjwdjgffkk2Gs0AN0dW1CKVLcG7w==
@@ -960,7 +960,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.22.5"
     "@babel/helper-plugin-utils" "^7.22.5"
 
-"@babel/preset-env@^7.22.9":
+"@babel/preset-env@^7.20.0":
   version "7.22.9"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.22.9.tgz#57f17108eb5dfd4c5c25a44c1977eba1df310ac7"
   integrity sha512-wNi5H/Emkhll/bqPjsjQorSykrlfY5OWakd6AulLvMEytpKasMVUpVy8RL4qBIBs5Ac6/5i0/Rv0b/Fg6Eag/g==
@@ -1093,7 +1093,7 @@
   resolved "https://registry.yarnpkg.com/@babel/regjsgen/-/regjsgen-0.8.0.tgz#f0ba69b075e1f05fb2825b7fad991e7adbb18310"
   integrity sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.22.6", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.20.0", "@babel/runtime@^7.8.4":
   version "7.22.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.6.tgz#57d64b9ae3cff1d67eb067ae117dac087f5bd438"
   integrity sha512-wDb5pWm4WDdF6LFUde3Jl8WzPA+3ZbxYqkC6xAXuD3irdEHN1k0NfTRrJD8ZD378SJ61miMLCqIOXYhd8x+AJQ==
