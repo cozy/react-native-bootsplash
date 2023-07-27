@@ -142,11 +142,11 @@ assets/bootsplash_logo@3x.png
 assets/bootsplash_logo@4x.png
 
 android/app/src/main/res/values/colors.xml (creation and edition)
-android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png
-android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-hdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-mdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-xhdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-xxhdpi/bootsplash_logo.png
+android/app/src/main/res/drawable-xxxhdpi/bootsplash_logo.png
 
 ios/YourProjectName/BootSplash.storyboard
 ios/YourProjectName/Images.xcassets/BootSplashLogo.imageset/bootsplash_logo.png
@@ -208,7 +208,7 @@ Set the `BootSplash.storyboard` as launch screen file:
   <!-- BootTheme should inherit from Theme.SplashScreen -->
   <style name="BootTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-    <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/bootsplash_logo</item>
     <item name="postSplashScreenTheme">@style/AppTheme</item>
   </style>
 

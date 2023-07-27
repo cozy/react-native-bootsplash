@@ -9,6 +9,30 @@ const xcassetName = "BootSplashLogo";
 const androidColorName = "bootsplash_background";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
+type RGBColor = {
+  R: string;
+  G: string;
+  B: string;
+};
+
+const parseColor = (value: string) => {
+  const up = value.toUpperCase().replace(/[^0-9A-F]/g, "");
+  const hex = "#" + (up.length === 3 ? up + up : up);
+
+  if (hex.length !== 7) {
+    log.error("--background-color value is not a valid hexadecimal color.");
+    process.exit(1);
+  }
+
+  const rgb: RGBColor = {
+    R: (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15),
+    G: (parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15),
+    B: (parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15),
+  };
+
+  return { hex, rgb };
+};
+
 const ContentsJson = `{
   "images": [
     {
@@ -34,21 +58,15 @@ const ContentsJson = `{
 }
 `;
 
-type Hexadecimal = ["#", string, string, string, string, string, string];
-
 const getStoryboard = ({
   height,
   width,
-  backgroundColor: hex,
+  backgroundColor: { R, G, B },
 }: {
   height: number;
   width: number;
-  backgroundColor: Hexadecimal;
+  backgroundColor: RGBColor;
 }) => {
-  const r = (parseInt("" + hex[1] + hex[2], 16) / 255).toPrecision(15);
-  const g = (parseInt("" + hex[3] + hex[4], 16) / 255).toPrecision(15);
-  const b = (parseInt("" + hex[5] + hex[6], 16) / 255).toPrecision(15);
-
   return `<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
@@ -77,7 +95,7 @@ const getStoryboard = ({
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="${r}" green="${g}" blue="${b}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="${R}" green="${G}" blue="${B}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" notEnabled="YES"/>
                         </accessibility>
@@ -103,21 +121,6 @@ const log = {
   error: (text: string) => console.log(pc.red(text)),
   text: (text: string) => console.log(text),
   warn: (text: string) => console.log(pc.yellow(text)),
-};
-
-const toFullHexadecimal = (hex: string): Hexadecimal => {
-  const up = hex.toUpperCase().replace(/[^0-9A-F]/g, "");
-  const [A = "", B = "", C = "", D = "", E = "", F = ""] = up;
-
-  if (up.length === 6) {
-    return ["#", A, B, C, D, E, F];
-  }
-  if (up.length === 3) {
-    return ["#", A, A, B, B, C, C];
-  }
-
-  log.error("--background-color value is not a valid hexadecimal color.");
-  process.exit(1);
 };
 
 export const generate = async ({
@@ -160,7 +163,7 @@ export const generate = async ({
     process.exit(1);
   }
 
-  const backgroundColorHex = toFullHexadecimal(backgroundColor);
+  const { hex, rgb } = parseColor(backgroundColor);
   const image = sharp(logoPath);
   const { format } = await image.metadata();
 
@@ -216,7 +219,7 @@ export const generate = async ({
     fs.ensureDirSync(assetsPath);
 
     const manifest: Manifest = {
-      backgroundColor,
+      backgroundColor: hex,
       logo: {
         height: logoHeight,
         width: logoWidth,
@@ -265,8 +268,7 @@ export const generate = async ({
     fs.ensureDirSync(valuesPath);
 
     const colorsXmlPath = path.resolve(valuesPath, "colors.xml");
-    const backgroundColorHexStr = backgroundColorHex.join("");
-    const colorsXmlEntry = `<color name="${androidColorName}">${backgroundColorHexStr}</color>`;
+    const colorsXmlEntry = `<color name="${androidColorName}">${hex}</color>`;
 
     if (fs.existsSync(colorsXmlPath)) {
       const colorsXml = fs.readFileSync(colorsXmlPath, "utf-8");
@@ -301,14 +303,17 @@ export const generate = async ({
 
     await Promise.all(
       [
-        { ratio: 1, directory: "mipmap-mdpi" },
-        { ratio: 1.5, directory: "mipmap-hdpi" },
-        { ratio: 2, directory: "mipmap-xhdpi" },
-        { ratio: 3, directory: "mipmap-xxhdpi" },
-        { ratio: 4, directory: "mipmap-xxxhdpi" },
+        { ratio: 1, directory: "drawable-mdpi" },
+        { ratio: 1.5, directory: "drawable-hdpi" },
+        { ratio: 2, directory: "drawable-xhdpi" },
+        { ratio: 3, directory: "drawable-xxhdpi" },
+        { ratio: 4, directory: "drawable-xxxhdpi" },
       ].map(({ ratio, directory }) => {
+        const drawableDirPath = path.resolve(resPath, directory);
+        fs.ensureDirSync(drawableDirPath);
+
         const fileName = `${logoFileName}.png`;
-        const filePath = path.resolve(resPath, directory, fileName);
+        const filePath = path.resolve(drawableDirPath, fileName);
         // https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
         const canvasSize = 288 * ratio;
 
@@ -358,7 +363,7 @@ export const generate = async ({
         getStoryboard({
           height: logoHeight,
           width: logoWidth,
-          backgroundColor: backgroundColorHex,
+          backgroundColor: rgb,
         }),
         "utf-8",
       );
