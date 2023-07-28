@@ -21,13 +21,13 @@ type Dimensions = {
 export type Manifest = {
   backgroundColor: string;
   logo: Dimensions;
-  // branding?: Dimensions;
+  // brand?: Dimensions;
 };
 
 export type UseHideAnimationConfig = {
   manifest: Manifest;
   logo: ImageRequireSource;
-  // branding?: ImageRequireSource;
+  // brand?: ImageRequireSource;
 
   animate: () => void;
 
@@ -38,7 +38,7 @@ export type UseHideAnimationConfig = {
 export type UseHideAnimation = {
   container: ViewProps;
   logo: ImageProps;
-  // branding?: ImageProps;
+  // brand?: ImageProps;
 };
 
 export function hide(config: Config = {}): Promise<void> {
@@ -54,7 +54,7 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   const {
     manifest,
     logo: logoSrc,
-    // branding: brandingSrc,
+    // brand: brandSrc,
 
     animate,
 
