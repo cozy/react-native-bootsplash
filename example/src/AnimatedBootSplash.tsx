@@ -14,6 +14,9 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     manifest: require("../assets/bootsplash_manifest.json"),
     logo: require("../assets/bootsplash_logo.png"),
 
+    statusBarTranslucent: false,
+    navigationBarTranslucent: false,
+
     animate: () => {
       Animated.stagger(250, [
         Animated.spring(translateY, {
@@ -31,11 +34,10 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
         toValue: 0,
         duration: 150,
         delay: 350,
-      }).start(() => onAnimationEnd());
+      }).start(() => {
+        onAnimationEnd();
+      });
     },
-
-    statusBarTranslucent: false,
-    navigationBarTranslucent: false,
   });
 
   return (
