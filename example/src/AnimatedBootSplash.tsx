@@ -18,6 +18,8 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
     navigationBarTranslucent: false,
 
     animate: () => {
+      const { height } = Dimensions.get("window");
+
       Animated.stagger(250, [
         Animated.spring(translateY, {
           useNativeDriver: true,
@@ -25,7 +27,7 @@ export const AnimatedBootSplash = ({ onAnimationEnd }: Props) => {
         }),
         Animated.spring(translateY, {
           useNativeDriver: true,
-          toValue: Dimensions.get("window").height,
+          toValue: height,
         }),
       ]).start();
 
