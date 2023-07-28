@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
     "@react-native/metro-config": "^0.72.9",
-    "@types/react": "^18.2.15",
+    "@types/react": "^18.2.17",
     "metro-react-native-babel-preset": "0.76.7",
     "pod-install": "^0.1.38",
     "typescript": "^5.1.6"
