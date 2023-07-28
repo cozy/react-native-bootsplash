@@ -54,12 +54,12 @@ public class RNBootSplashModuleImpl {
       return;
     }
 
-    // Apply postSplashScreenTheme
+    // Apply postBootSplashTheme
     TypedValue typedValue = new TypedValue();
     Resources.Theme currentTheme = activity.getTheme();
 
     if (currentTheme
-      .resolveAttribute(R.attr.postSplashScreenTheme, typedValue, true)) {
+      .resolveAttribute(R.attr.postBootSplashTheme, typedValue, true)) {
       int finalThemeId = typedValue.resourceId;
 
       if (finalThemeId != 0) {

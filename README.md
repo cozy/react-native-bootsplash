@@ -205,11 +205,11 @@ Set the `BootSplash.storyboard` as launch screen file:
       <!-- Your base theme customization -->
   </style>
 
-  <!-- BootTheme should inherit from Theme.SplashScreen -->
-  <style name="BootTheme" parent="Theme.SplashScreen">
-    <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
-    <item name="windowSplashScreenAnimatedIcon">@drawable/bootsplash_logo</item>
-    <item name="postSplashScreenTheme">@style/AppTheme</item>
+  <!-- BootTheme should inherit from Theme.BootSplash -->
+  <style name="BootTheme" parent="Theme.BootSplash">
+    <item name="bootSplashBackground">@color/bootsplash_background</item>
+    <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+    <item name="postBootSplashTheme">@style/AppTheme</item>
   </style>
 
 </resources>

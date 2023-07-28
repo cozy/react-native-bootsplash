@@ -1,7 +1,7 @@
 <resources>
-    <public name="Theme.SplashScreen" type="style" />
-    <public name="postSplashScreenTheme" type="attr" />
-    <public name="windowSplashScreenAnimatedIcon" type="attr" />
-    <public name="windowSplashScreenBackground" type="attr" />
-    <public name="windowSplashScreenBrandingImage" type="attr" />
+    <public name="Theme.BootSplash" type="style" />
+    <public name="bootSplashBackground" type="attr" />
+    <public name="bootSplashLogo" type="attr" />
+    <public name="bootSplashBrand" type="attr" />
+    <public name="postBootSplashTheme" type="attr" />
 </resources>
