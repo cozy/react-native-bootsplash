@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { AnimatedBootSplash } from "./AnimatedSplashScreen";
+import { AnimatedBootSplash } from "./AnimatedBootSplash";
 
 const styles = StyleSheet.create({
   container: {

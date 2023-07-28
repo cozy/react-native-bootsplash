@@ -21,13 +21,19 @@ type Dimensions = {
 export type Manifest = {
   backgroundColor: string;
   logo: Dimensions;
-  // brand?: Dimensions;
+  brand?: Dimensions;
+
+  dark?: {
+    backgroundColor: string;
+    logo: Dimensions;
+    brand?: Dimensions;
+  };
 };
 
 export type UseHideAnimationConfig = {
   manifest: Manifest;
   logo: ImageRequireSource;
-  // brand?: ImageRequireSource;
+  brand?: ImageRequireSource;
 
   animate: () => void;
 
@@ -38,7 +44,7 @@ export type UseHideAnimationConfig = {
 export type UseHideAnimation = {
   container: ViewProps;
   logo: ImageProps;
-  // brand?: ImageProps;
+  brand?: ImageProps;
 };
 
 export function hide(config: Config = {}): Promise<void> {
@@ -91,31 +97,30 @@ export function useHideAnimation(config: UseHideAnimationConfig) {
   return useMemo<UseHideAnimation>(() => {
     const containerStyle: ViewStyle = {
       ...StyleSheet.absoluteFillObject,
-      alignItems: "center",
-      flex: 1,
-      justifyContent: "center",
       backgroundColor,
+      alignItems: "center",
+      justifyContent: "center",
     };
 
     const container: ViewProps = {
+      style: containerStyle,
       onLayout: () => {
         layoutReady.current = true;
         maybeRunAnimate();
       },
-      style: containerStyle,
     };
 
     const logo: ImageProps = {
       fadeDuration: 0,
       resizeMode: "contain",
       source: logoSrc,
-      onLoadEnd: () => {
-        logoReady.current = true;
-        maybeRunAnimate();
-      },
       style: {
         height: logoHeight,
         width: logoWidth,
+      },
+      onLoadEnd: () => {
+        logoReady.current = true;
+        maybeRunAnimate();
       },
     };
 
