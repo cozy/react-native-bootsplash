@@ -17,11 +17,13 @@ typedef enum {
 
 @property (nonatomic, readonly) RNBootSplashTaskType type;
 @property (nonatomic, readonly) BOOL fade;
+@property (nonatomic, readonly) NSString* bootsplashName;
 @property (nonatomic, readonly, strong) RCTPromiseResolveBlock _Nonnull resolve;
 @property (nonatomic, readonly, strong) RCTPromiseRejectBlock _Nonnull reject;
 
 - (instancetype _Nonnull)initWithType:(RNBootSplashTaskType)type
                                  fade:(BOOL)fade
+                       bootsplashName:(NSString *)bootsplashName
                              resolver:(RCTPromiseResolveBlock _Nonnull)resolve
                              rejecter:(RCTPromiseRejectBlock _Nonnull)reject;
 
@@ -31,5 +33,8 @@ typedef enum {
 
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(RCTRootView * _Nonnull)rootView;
++ (void)addBootsplashName:(NSString * _Nonnull)name;
++ (void)removeBootsplashName:(NSString * _Nonnull)name;
++ (BOOL)hasBootsplashToDisplay;
 
 @end

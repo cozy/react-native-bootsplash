@@ -41,6 +41,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   private static int mDrawableResId = -1;
   private static final ArrayList<RNBootSplashTask> mTaskQueue = new ArrayList<>();
+  private static final ArrayList<String> mBootsplashNames = new ArrayList<>();
   private static Status mStatus = Status.HIDDEN;
   private static boolean mIsAppInBackground = false;
 
@@ -95,7 +96,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   @Override
   public void onHostPause() {
     Promise promise = new PromiseImpl(null, null);
-    mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, false, promise));
+    mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, false, "secure_background", promise));
     shiftNextTask();
   }
 
@@ -142,6 +143,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        addBootsplashName(task.getBootsplashName());
         final Activity activity = getReactApplicationContext().getCurrentActivity();
         final Promise promise = task.getPromise();
 
@@ -195,6 +197,13 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        removeBootsplashName(task.getBootsplashName());
+
+        if (hasBootsplashToDisplay()) {
+          waitAndShiftNextTask(); // splash screen should still be displayed for some BootsplashNames
+          return;
+        }
+
         final Activity activity = getReactApplicationContext().getCurrentActivity();
         final Promise promise = task.getPromise();
 
@@ -245,21 +254,21 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   }
 
   @ReactMethod
-  public void show(final boolean fade, final Promise promise) {
+  public void show(final boolean fade, final String bootsplashName, final Promise promise) {
     if (mDrawableResId == -1) {
       promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
     } else {
-      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, fade, promise));
+      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, fade, bootsplashName, promise));
       shiftNextTask();
     }
   }
 
   @ReactMethod
-  public void hide(final boolean fade, final Promise promise) {
+  public void hide(final boolean fade, final String bootsplashName, final Promise promise) {
     if (mDrawableResId == -1) {
       promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
     } else {
-      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.HIDE, fade, promise));
+      mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.HIDE, fade, bootsplashName, promise));
       shiftNextTask();
     }
   }
@@ -278,5 +287,21 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         promise.resolve("transitioning");
         break;
     }
+  }
+
+  protected void addBootsplashName(String name) {
+    if (!mBootsplashNames.contains(name)) {
+      mBootsplashNames.add(name);
+    }
+  }
+
+  protected void removeBootsplashName(String name) {
+    if (mBootsplashNames.contains(name)) {
+      mBootsplashNames.remove(name);
+    }
+  }
+
+  protected boolean hasBootsplashToDisplay() {
+    return mBootsplashNames.size() != 0;
   }
 }

@@ -12,19 +12,26 @@ public class RNBootSplashTask {
   }
 
   private final boolean mFade;
+  private final String mBootsplashName;
   @NonNull private final Promise mPromise;
   @NonNull private final Type mType;
 
   public RNBootSplashTask(@NonNull Type type,
                           boolean fade,
+                          String bootsplashName,
                           @NonNull Promise promise) {
     mType = type;
     mFade = fade;
+    mBootsplashName = bootsplashName;
     mPromise = promise;
   }
 
   public boolean getFade() {
     return mFade;
+  }
+
+  public String getBootsplashName() {
+    return mBootsplashName;
   }
 
   @NonNull
