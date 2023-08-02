@@ -80,6 +80,10 @@ RCT_EXPORT_MODULE();
                                            selector:@selector(shiftNextTask)
                                                name:UIApplicationDidBecomeActiveNotification
                                              object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(applicationWillResignActive)
+                                               name:UIApplicationWillResignActiveNotification
+                                             object:nil];
 }
 
 + (void)onJavaScriptDidLoad:(NSNotification *)notification {
@@ -161,6 +165,17 @@ RCT_EXPORT_MODULE();
       [self shiftNextTask];
     }];
   }
+}
+
++ (void)applicationWillResignActive
+{
+    RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithType:RNBootSplashTaskTypeShow
+                                                               fade:false
+                                                           resolver:^(NSString *one) {}
+                                                           rejecter:^(NSString *one, NSString *two, NSError *three) {}];
+
+    [_taskQueue addObject:task];
+    [RNBootSplash shiftNextTask];
 }
 
 RCT_REMAP_METHOD(show,
