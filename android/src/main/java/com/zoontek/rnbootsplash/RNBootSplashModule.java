@@ -20,6 +20,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.bridge.PromiseImpl;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -93,7 +94,9 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   @Override
   public void onHostPause() {
-    mIsAppInBackground = true;
+    Promise promise = new PromiseImpl(null, null);
+    mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, false, promise));
+    shiftNextTask();
   }
 
   @Override
