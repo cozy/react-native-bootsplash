@@ -4,6 +4,7 @@
 #import <React/RCTUtils.h>
 
 static NSMutableArray<RNBootSplashTask *> *_taskQueue = nil;
+static NSMutableArray<NSString *> *_bootsplashNames = nil;
 static NSString *_storyboardName = @"BootSplash";
 static RCTRootView *_rootView = nil;
 static RNBootSplashStatus _status = RNBootSplashStatusHidden;
@@ -13,11 +14,13 @@ static UIViewController *_splashVC = nil;
 
 - (instancetype)initWithType:(RNBootSplashTaskType)type
                         fade:(BOOL)fade
+                        bootsplashName:(NSString *)bootsplashName
                     resolver:(RCTPromiseResolveBlock _Nonnull)resolve
                     rejecter:(RCTPromiseRejectBlock _Nonnull)reject {
   if (self = [super init]) {
     _type = type;
     _fade = fade;
+    _bootsplashName = bootsplashName;
     _resolve = resolve;
     _reject = reject;
   }
@@ -39,12 +42,29 @@ RCT_EXPORT_MODULE();
   return dispatch_get_main_queue();
 }
 
++ (void)addBootsplashName:(NSString * _Nonnull)name {
+  if ([_bootsplashNames indexOfObject:name] == NSNotFound) {
+    [_bootsplashNames addObject:name];
+  }
+}
+
++ (void)removeBootsplashName:(NSString * _Nonnull)name {
+  if ([_bootsplashNames indexOfObject:name] != NSNotFound) {
+    [_bootsplashNames removeObject:name];
+  }
+}
+
++ (BOOL)hasBootsplashToDisplay {
+  return [_bootsplashNames count] != 0;
+}
+
 + (void)initWithStoryboard:(NSString * _Nonnull)storyboardName
                   rootView:(RCTRootView * _Nonnull)rootView {
   _rootView = rootView;
   _status = RNBootSplashStatusVisible;
   _storyboardName = storyboardName;
   _taskQueue = [[NSMutableArray alloc] init];
+  _bootsplashNames = [[NSMutableArray alloc] init];
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:_storyboardName bundle:nil];
   [_rootView setLoadingView:[[storyboard instantiateInitialViewController] view]];
@@ -128,6 +148,7 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)showWithTask:(RNBootSplashTask *)task {
+  [RNBootSplash addBootsplashName:task.bootsplashName];
   if (_splashVC != nil) {
     task.resolve(@(true)); // splash screen is already visible
     [self shiftNextTask];
@@ -150,7 +171,11 @@ RCT_EXPORT_MODULE();
 }
 
 + (void)hideWithTask:(RNBootSplashTask *)task {
-  if (_splashVC == nil) {
+  [RNBootSplash removeBootsplashName:task.bootsplashName];
+  if ([self hasBootsplashToDisplay]) {
+    task.resolve(@(true)); // splash screen should still be displayed for some BootsplashNames
+    [self shiftNextTask];
+  } else if (_splashVC == nil) {
     task.resolve(@(true)); // splash screen is already hidden
     [self shiftNextTask];
   } else {
@@ -171,6 +196,7 @@ RCT_EXPORT_MODULE();
 {
     RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithType:RNBootSplashTaskTypeShow
                                                                fade:false
+                                                     bootsplashName:@"secure_background"
                                                            resolver:^(NSString *one) {}
                                                            rejecter:^(NSString *one, NSString *two, NSError *three) {}];
 
@@ -180,6 +206,7 @@ RCT_EXPORT_MODULE();
 
 RCT_REMAP_METHOD(show,
                  showWithFade:(BOOL)fade
+                 showWithName:(NSString *)bootsplashName
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_rootView == nil)
@@ -187,6 +214,7 @@ RCT_REMAP_METHOD(show,
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithType:RNBootSplashTaskTypeShow
                                                              fade:fade
+                                                   bootsplashName:bootsplashName
                                                          resolver:resolve
                                                          rejecter:reject];
 
@@ -196,6 +224,7 @@ RCT_REMAP_METHOD(show,
 
 RCT_REMAP_METHOD(hide,
                  hideWithFade:(BOOL)fade
+                 hideWithName:(NSString *)bootsplashName
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
   if (_rootView == nil)
@@ -203,6 +232,7 @@ RCT_REMAP_METHOD(hide,
 
   RNBootSplashTask *task = [[RNBootSplashTask alloc] initWithType:RNBootSplashTaskTypeHide
                                                              fade:fade
+                                                   bootsplashName:bootsplashName
                                                          resolver:resolve
                                                          rejecter:reject];
 
