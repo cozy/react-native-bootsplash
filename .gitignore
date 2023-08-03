@@ -62,9 +62,6 @@ buck-out/
 # CocoaPods
 Pods/
 
-# Bob
-dist/
-
 # OCaml / Reason
 **/.merlin
 **/lib/bs
