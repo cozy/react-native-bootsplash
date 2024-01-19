@@ -45,6 +45,10 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
   private static Status mStatus = Status.HIDDEN;
   private static boolean mIsAppInBackground = false;
 
+  static {
+    mBootsplashNames.add("global");
+  }
+
   public RNBootSplashModule(ReactApplicationContext reactContext) {
     super(reactContext);
     reactContext.addLifecycleEventListener(this);
