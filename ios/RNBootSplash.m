@@ -42,6 +42,12 @@ RCT_EXPORT_MODULE();
   return dispatch_get_main_queue();
 }
 
++ (void)initialize {
+    if (self == [RNBootSplash class]) {
+        _bootsplashNames = [NSMutableArray arrayWithObject:@"global"];
+    }
+}
+
 + (void)addBootsplashName:(NSString * _Nonnull)name {
   if ([_bootsplashNames indexOfObject:name] == NSNotFound) {
     [_bootsplashNames addObject:name];
@@ -64,7 +70,6 @@ RCT_EXPORT_MODULE();
   _status = RNBootSplashStatusVisible;
   _storyboardName = storyboardName;
   _taskQueue = [[NSMutableArray alloc] init];
-  _bootsplashNames = [[NSMutableArray alloc] init];
 
   UIStoryboard *storyboard = [UIStoryboard storyboardWithName:_storyboardName bundle:nil];
   [_rootView setLoadingView:[[storyboard instantiateInitialViewController] view]];
