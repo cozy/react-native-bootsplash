@@ -152,6 +152,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final Promise promise = task.getPromise();
 
         if (activity == null || activity.isFinishing()) {
+          promise.resolve(true);
           waitAndShiftNextTask();
           return;
         }
@@ -203,15 +204,18 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
       public void run() {
         removeBootsplashName(task.getBootsplashName());
 
+        final Promise promise = task.getPromise();
+
         if (hasBootsplashToDisplay()) {
+          promise.resolve(true);
           waitAndShiftNextTask(); // splash screen should still be displayed for some BootsplashNames
           return;
         }
 
         final Activity activity = getReactApplicationContext().getCurrentActivity();
-        final Promise promise = task.getPromise();
 
         if (activity == null || activity.isFinishing()) {
+          promise.resolve(true);
           waitAndShiftNextTask();
           return;
         }
