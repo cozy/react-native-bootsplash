@@ -152,13 +152,13 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final Promise promise = task.getPromise();
 
         if (activity == null || activity.isFinishing()) {
-          promise.resolve(true);
+          promise.resolve("activity_finishing");
           waitAndShiftNextTask();
           return;
         }
 
         if (activity.findViewById(R.id.bootsplash_layout_id) != null) {
-          promise.resolve(true); // splash screen is already visible
+          promise.resolve("already_visible"); // splash screen is already visible
           shiftNextTask();
           return;
         }
@@ -207,7 +207,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final Promise promise = task.getPromise();
 
         if (hasBootsplashToDisplay()) {
-          promise.resolve(true);
+          promise.resolve("shift_next");
           waitAndShiftNextTask(); // splash screen should still be displayed for some BootsplashNames
           return;
         }
@@ -215,7 +215,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final Activity activity = getReactApplicationContext().getCurrentActivity();
 
         if (activity == null || activity.isFinishing()) {
-          promise.resolve(true);
+          promise.resolve("activity_finishing");
           waitAndShiftNextTask();
           return;
         }
@@ -223,7 +223,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
         final LinearLayout layout = activity.findViewById(R.id.bootsplash_layout_id);
 
         if (layout == null) {
-          promise.resolve(true); // splash screen is already hidden
+          promise.resolve("already_hidden"); // splash screen is already hidden
           shiftNextTask();
           return;
         }
