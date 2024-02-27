@@ -3,8 +3,9 @@ export declare type Config = {
     fade?: boolean;
     bootsplashName?: string;
 };
-export declare function show(config?: Config): Promise<void>;
-export declare function hide(config?: Config): Promise<void>;
+export declare type ResultStatus = boolean | "activity_finishing" | "already_visible" | "already_hidden" | "shift_next";
+export declare function show(config?: Config): Promise<ResultStatus>;
+export declare function hide(config?: Config): Promise<ResultStatus>;
 export declare function getVisibilityStatus(): Promise<VisibilityStatus>;
 declare const _default: {
     show: typeof show;

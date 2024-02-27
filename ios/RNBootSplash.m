@@ -155,7 +155,7 @@ RCT_EXPORT_MODULE();
 + (void)showWithTask:(RNBootSplashTask *)task {
   [RNBootSplash addBootsplashName:task.bootsplashName];
   if (_splashVC != nil) {
-    task.resolve(@(true)); // splash screen is already visible
+    task.resolve(@("already_visible")); // splash screen is already visible
     [self shiftNextTask];
   } else {
     _status = RNBootSplashStatusTransitioningToVisible;
@@ -178,10 +178,10 @@ RCT_EXPORT_MODULE();
 + (void)hideWithTask:(RNBootSplashTask *)task {
   [RNBootSplash removeBootsplashName:task.bootsplashName];
   if ([self hasBootsplashToDisplay]) {
-    task.resolve(@(true)); // splash screen should still be displayed for some BootsplashNames
+    task.resolve(@("shift_next")); // splash screen should still be displayed for some BootsplashNames
     [self shiftNextTask];
   } else if (_splashVC == nil) {
-    task.resolve(@(true)); // splash screen is already hidden
+    task.resolve(@("already_hidden")); // splash screen is already hidden
     [self shiftNextTask];
   } else {
     _status = RNBootSplashStatusTransitioningToHidden;
