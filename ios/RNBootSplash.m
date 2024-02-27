@@ -52,12 +52,14 @@ RCT_EXPORT_MODULE();
   if ([_bootsplashNames indexOfObject:name] == NSNotFound) {
     [_bootsplashNames addObject:name];
   }
+  NSLog(@"🌊 RNBootSplash _bootsplashNames = %@", _bootsplashNames);
 }
 
 + (void)removeBootsplashName:(NSString * _Nonnull)name {
   if ([_bootsplashNames indexOfObject:name] != NSNotFound) {
     [_bootsplashNames removeObject:name];
   }
+  NSLog(@"🌊 RNBootSplash _bootsplashNames = %@", _bootsplashNames);
 }
 
 + (BOOL)hasBootsplashToDisplay {
