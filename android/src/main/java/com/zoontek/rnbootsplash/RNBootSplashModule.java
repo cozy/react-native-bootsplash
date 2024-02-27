@@ -3,6 +3,7 @@ package com.zoontek.rnbootsplash;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -31,6 +32,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
 
   public static final String MODULE_NAME = "RNBootSplash";
   private static final int ANIMATION_DURATION = 220;
+  private static final String TAG = "🌊 RNBootSplash";
 
   private enum Status {
     VISIBLE,
@@ -147,6 +149,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        Log.d(TAG, "run show " + task.getBootsplashName());
         addBootsplashName(task.getBootsplashName());
         final Activity activity = getReactApplicationContext().getCurrentActivity();
         final Promise promise = task.getPromise();
@@ -202,6 +205,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        Log.d(TAG, "run hide " + task.getBootsplashName());
         removeBootsplashName(task.getBootsplashName());
 
         final Promise promise = task.getPromise();
@@ -266,6 +270,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     if (mDrawableResId == -1) {
       promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
     } else {
+      Log.d(TAG, "show " + bootsplashName);
       mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.SHOW, fade, bootsplashName, promise));
       shiftNextTask();
     }
@@ -276,6 +281,7 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     if (mDrawableResId == -1) {
       promise.reject("uninitialized_module", "react-native-bootsplash has not been initialized");
     } else {
+      Log.d(TAG, "hide " + bootsplashName);
       mTaskQueue.add(new RNBootSplashTask(RNBootSplashTask.Type.HIDE, fade, bootsplashName, promise));
       shiftNextTask();
     }
@@ -301,12 +307,14 @@ public class RNBootSplashModule extends ReactContextBaseJavaModule implements Li
     if (!mBootsplashNames.contains(name)) {
       mBootsplashNames.add(name);
     }
+    Log.d(TAG, "mBootsplashNames = " + mBootsplashNames.toString());
   }
 
   protected void removeBootsplashName(String name) {
     if (mBootsplashNames.contains(name)) {
       mBootsplashNames.remove(name);
     }
+    Log.d(TAG, "mBootsplashNames = " + mBootsplashNames.toString());
   }
 
   protected boolean hasBootsplashToDisplay() {
